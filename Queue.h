@@ -18,17 +18,17 @@ protected:
 public:
 	BasicQueue() {}
 	BasicQueue(initializer_list<T> list);
-	virtual ~BasicQueue();
+	~BasicQueue();
 	BasicQueue(const BasicQueue& q);
-	virtual BasicQueue<T>& operator=(const BasicQueue<T>& q);
-	virtual void enqueue(const T& value);
-	virtual void dequeue();
-	virtual T peek();
-	virtual size_t length() const;
-	virtual bool isEmpty() const;
-	virtual void clear();
-	virtual void print() const;
-	virtual void print(int x, int y);
+	BasicQueue<T>& operator=(const BasicQueue<T>& q);
+	void enqueue(const T& value);
+	void dequeue();
+	T peek();
+	size_t length() const;
+	bool isEmpty() const;
+	void clear();
+	void print() const;
+	void print(int x, int y);
 };
 
 template<class T>
@@ -177,12 +177,71 @@ void BasicQueue<T>::print(int x, int y)
 }
 
 template<class T>
-class Queue : public BasicQueue<T>
+class QueueRing : public virtual BasicQueue<T>
 {
+	Data<T>* first = nullptr;
+	Data<T>* last = nullptr;
+	size_t   size = 0;
+
 public:
-	Queue() {}
-	BasicQueue(initializer_list<T> list);
-	virtual ~BasicQueue();
-	BasicQueue(const BasicQueue& q);
-	virtual BasicQueue<T>& operator=(const BasicQueue<T>& q);
+	QueueRing() : BasicQueue() {}
+	QueueRing(initializer_list<T> list);
+	~QueueRing();
+	//QueueRing(const QueueRing& q);
+	//QueueRing<T>& operator=(const QueueRing<T>& q);
+	void enqueue(const T& value);
+	//void print() const;
+	void ring();
+
+	
+
 };
+
+
+
+
+template<class T>
+QueueRing<T>::QueueRing(initializer_list<T> list)
+{
+	for (auto i = list.begin(); i < list.end(); i++)
+		enqueue(*i);
+}
+
+template<class T>
+QueueRing<T>::~QueueRing()
+{
+	this->clear();
+}
+
+template<class T>
+void QueueRing<T>::enqueue(const T& value)
+{
+	if (size == 0)
+	{
+		first = new Data<T>;
+		first->value = value;
+		last = first;
+	}
+	else
+	{
+		last->next = new Data<T>;
+		last->next->value = value;
+		last = last->next;
+	}
+	size++;
+}
+
+template<class T>
+void QueueRing<T>::ring()
+{
+
+	if (size > 1)
+	{
+		Data<T>* temp = first;
+		first = first->next;
+		last->next = temp;
+		last = temp;
+		last->next = nullptr;
+	}
+}
+

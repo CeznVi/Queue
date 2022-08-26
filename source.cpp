@@ -8,8 +8,12 @@ int main()
     SetConsoleOutputCP(1251);
     std::cout << "Демонстрація роботи переробленої черги\n";
 
-    Queue<int> q = { 1,2,3 };
+    QueueRing<int> q = { 1,2,3 };
     q.print();
+    //QueueRing<int> q1 = { 11,22,33 };
+   
+    //q = q1;
+    ;
     q.enqueue(10);
     q.enqueue(20);
     q.enqueue(30);
