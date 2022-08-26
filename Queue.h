@@ -4,6 +4,8 @@
 #include "Data.h"
 #include "Func.h"
 ////×ÅĞÃÀ Ï²ÑËß ìîäåğí³çàö³¿
+//ÍÅÄÎĞÎÁÈÂ
+
 
 using namespace std;
 
@@ -179,9 +181,7 @@ void BasicQueue<T>::print(int x, int y)
 template<class T>
 class QueueRing : public virtual BasicQueue<T>
 {
-	Data<T>* first = nullptr;
-	Data<T>* last = nullptr;
-	size_t   size = 0;
+
 
 public:
 	QueueRing() : BasicQueue() {}
