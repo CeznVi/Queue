@@ -12,7 +12,7 @@ using namespace std;
 template<class T>
 class BasicQueue
 {
-protected:
+
 	Data<T>* first = nullptr;
 	Data<T>* last = nullptr;
 	size_t   size = 0;
@@ -32,6 +32,31 @@ public:
 	void print() const;
 	void print(int x, int y);
 };
+
+template<class T>
+class QueueRing : public virtual BasicQueue<T>
+{
+
+	Data<T>* first = nullptr;
+	Data<T>* last = nullptr;
+	size_t   size = 0;
+
+public:
+	QueueRing(){}
+	QueueRing(initializer_list<T> list);
+	~QueueRing();
+	//QueueRing(const QueueRing& q);
+	//QueueRing<T>& operator=(const QueueRing<T>& q);
+	void enqueue(const T& value);
+	//void print() const;
+	void ring();
+
+
+
+};
+
+
+
 
 template<class T>
 BasicQueue<T>::BasicQueue(initializer_list<T> list)
@@ -178,24 +203,7 @@ void BasicQueue<T>::print(int x, int y)
 	cout << '\n';
 }
 
-template<class T>
-class QueueRing : public virtual BasicQueue<T>
-{
 
-
-public:
-	QueueRing() : BasicQueue() {}
-	QueueRing(initializer_list<T> list);
-	~QueueRing();
-	//QueueRing(const QueueRing& q);
-	//QueueRing<T>& operator=(const QueueRing<T>& q);
-	void enqueue(const T& value);
-	//void print() const;
-	void ring();
-
-	
-
-};
 
 
 
