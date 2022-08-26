@@ -33,7 +33,7 @@ public:
 	Queue(initializer_list<T> list);
 	~Queue();
 	Queue(const Queue& q);
-	Queue& operator=(const Queue& q);
+	Queue<T>& operator=(const Queue<T>& q);
 	void enqueue(const T& value);
 	void dequeue();
 	T peek();
@@ -76,6 +76,18 @@ Queue<T>::Queue(const Queue& q)
 		this->enqueue(temp->value);
 		temp = temp->next;
 	}
+}
+
+template<class T>
+Queue<T>& Queue<T>::operator=(const Queue<T>& q)
+{
+	Data<T>* temp = q.first;
+	while (temp)
+	{
+		this->enqueue(temp->value);
+		temp = temp->next;
+	}
+	return *this;
 }
 
 template<class T>

@@ -7,85 +7,45 @@
 
 using namespace std;
 
-
 template<class T>
 class BasicQueue
 {
+protected:
 	Data<T>* first = nullptr;
 	Data<T>* last = nullptr;
 	size_t   size = 0;
 
 public:
-	Queue() {}
-	Queue(initializer_list<T> list);
-	~Queue();
-	Queue(const Queue& q);
-	Queue& operator=(const Queue& q);
-	void enqueue(const T& value);
-	void dequeue();
-	T peek();
-	size_t length() const;
-	bool isEmpty() const;
-	void clear();
-	void print() const;
-	void print(int x, int y);
-};
-
-//template<class T>
-//class B : public A<T>
-//{
-//
-//};
-
-
-template<class T>
-class Queue
-{
-	Data<T>* first = nullptr;
-	Data<T>* last = nullptr;
-	size_t   size = 0;
-
-public:
-	Queue() {}
-	Queue(initializer_list<T> list);
-	~Queue();
-	Queue(const Queue& q);
-	Queue& operator=(const Queue& q);
-	void enqueue(const T& value);
-	void dequeue();
-	T peek();
-	size_t length() const;
-	bool isEmpty() const;
-	void clear();
-	void print() const;
-	void print(int x, int y);
-
-	void ring();
-
+	BasicQueue() {}
+	BasicQueue(initializer_list<T> list);
+	virtual ~BasicQueue();
+	BasicQueue(const BasicQueue& q);
+	virtual BasicQueue<T>& operator=(const BasicQueue<T>& q);
+	virtual void enqueue(const T& value);
+	virtual void dequeue();
+	virtual T peek();
+	virtual size_t length() const;
+	virtual bool isEmpty() const;
+	virtual void clear();
+	virtual void print() const;
+	virtual void print(int x, int y);
 };
 
 template<class T>
-Queue<T>::Queue(initializer_list<T> list)
+BasicQueue<T>::BasicQueue(initializer_list<T> list)
 {
 	for (auto i = list.begin(); i < list.end(); i++)
-	{
 		enqueue(*i);
-	}
-
-	/*for (T l : list)
-	{
-		enqueue(l);
-	}*/
 }
 
 template<class T>
-inline Queue<T>::~Queue()
+BasicQueue<T>::~BasicQueue()
 {
 	this->clear();
 }
 
 template<class T>
-Queue<T>::Queue(const Queue& q)
+BasicQueue<T>::BasicQueue(const BasicQueue& q)
 {
 	Data<T>* temp = q.first;
 	while (temp)
@@ -96,7 +56,19 @@ Queue<T>::Queue(const Queue& q)
 }
 
 template<class T>
-void Queue<T>::enqueue(const T& value)
+BasicQueue<T>& BasicQueue<T>::operator=(const BasicQueue<T>& q)
+{
+	Data<T>* temp = q.first;
+	while (temp)
+	{
+		this->enqueue(temp->value);
+		temp = temp->next;
+	}
+	return *this;
+}
+
+template<class T>
+void BasicQueue<T>::enqueue(const T& value)
 {
 	if (size == 0)
 	{
@@ -114,7 +86,7 @@ void Queue<T>::enqueue(const T& value)
 }
 
 template<class T>
-void Queue<T>::dequeue()
+void BasicQueue<T>::dequeue()
 {
 	if (size > 0)
 	{
@@ -127,30 +99,27 @@ void Queue<T>::dequeue()
 }
 
 template<class T>
-T Queue<T>::peek()
+T BasicQueue<T>::peek()
 {
 	assert(size > 0);
 	return first->value;
 }
 
 template<class T>
-size_t Queue<T>::length() const
+size_t BasicQueue<T>::length() const
 {
 	return size;
 }
 
 template<class T>
-bool Queue<T>::isEmpty() const
+bool BasicQueue<T>::isEmpty() const
 {
 	return size == 0;
 }
 
 template<class T>
-void Queue<T>::clear()
+void BasicQueue<T>::clear()
 {
-	/*while (size)
-		dequeue();*/
-
 	Data<T>* temp = first;
 	while (temp)
 	{
@@ -163,7 +132,7 @@ void Queue<T>::clear()
 }
 
 template<class T>
-void Queue<T>::print() const
+void BasicQueue<T>::print() const
 {
 	Data<T>* temp = first;
 	while (temp)
@@ -175,7 +144,7 @@ void Queue<T>::print() const
 }
 
 template<class T>
-void Queue<T>::print(int x, int y)
+void BasicQueue<T>::print(int x, int y)
 {
 	Data<T>* temp = first;
 	for (size_t i = 0; i < size; i++)
@@ -183,7 +152,7 @@ void Queue<T>::print(int x, int y)
 		if (i <= 10)
 		{
 			gotoxy(x, y++);
-			cout << temp->value << endl;
+			cout << temp->value << '\n';
 		}
 		else
 		{
@@ -192,190 +161,28 @@ void Queue<T>::print(int x, int y)
 				if (i == size - 10)
 				{
 					gotoxy(x, y++);
-					cout << "======^^^=====" << endl;
+					cout << "======^^^=====" << '\n';
 				}
 				else
 				{
 					gotoxy(x, y++);
-					cout << temp->value << endl;
+					cout << temp->value << '\n';
 				}
 			}
 		}
 
 		temp = temp->next;
 	}
-	cout << endl;
+	cout << '\n';
 }
 
 template<class T>
-void Queue<T>::ring()
+class Queue : public BasicQueue<T>
 {
-	/*this->enqueue(first->value);
-	this->dequeue();*/
-
-	if (size > 1)
-	{
-		Data<T>* temp = first;
-		first = first->next;
-		last->next = temp;
-		last = temp;
-		last->next = nullptr;
-	}
-}
-
-
-
-/////////////////  PRIORITY QUEUE //////////////
-
-template<class T>
-class PriorityQueue
-{
-	Data<T>* first = nullptr;
-	Data<T>* last = nullptr;
-	size_t   size = 0;
-
 public:
-	PriorityQueue() {}
-	PriorityQueue(initializer_list<T> list);
-	~PriorityQueue();
-	PriorityQueue(const PriorityQueue& q);
-	PriorityQueue& operator=(const PriorityQueue& q);
-	void enqueue(const T& value, PRIORITY pri = PRIORITY::LOW);
-	void dequeue();
-	T peek();
-	size_t length() const;
-	bool isEmpty() const;
-	void clear();
-	void print() const;
+	Queue() {}
+	BasicQueue(initializer_list<T> list);
+	virtual ~BasicQueue();
+	BasicQueue(const BasicQueue& q);
+	virtual BasicQueue<T>& operator=(const BasicQueue<T>& q);
 };
-
-template<class T>
-void PriorityQueue<T>::enqueue(const T& value, PRIORITY pri)
-{
-	Data<T>* temp = new Data<T>;
-	temp->value = value;
-	temp->pri = pri;
-
-	if (size == 0)
-	{
-		first = last = temp;
-		size++;
-		return;
-	}
-
-	if (pri <= last->pri)
-	{
-		last->next = temp;
-		last = temp;
-	}
-	else if (pri > first->pri)
-	{
-		temp->next = first;
-		first = temp;
-	}
-	else
-	{
-		Data<T>* pos = first;
-		while (pri <= pos->next->pri)
-		{
-			pos = pos->next;
-		}
-		temp->next = pos->next;
-		pos->next = temp;
-	}
-	size++;
-}
-
-
-template<class T>
-PriorityQueue<T>::PriorityQueue(initializer_list<T> list)
-{
-	for (auto i = list.begin(); i < list.end(); i++)
-	{
-		enqueue(*i);
-	}
-
-	/*for (T l : list)
-	{
-		enqueue(l);
-	}*/
-}
-
-template<class T>
-inline PriorityQueue<T>::~PriorityQueue()
-{
-	this->clear();
-}
-
-template<class T>
-PriorityQueue<T>::PriorityQueue(const PriorityQueue& q)
-{
-	Data<T>* temp = q.first;
-	while (temp)
-	{
-		this->enqueue(temp->value);
-		temp = temp->next;
-	}
-}
-
-
-template<class T>
-void PriorityQueue<T>::dequeue()
-{
-	if (size > 0)
-	{
-		Data<T>* temp = first;
-		first = first->next;
-		delete temp;
-		size--;
-		last = (size == 0) ? nullptr : last;
-	}
-}
-
-template<class T>
-T PriorityQueue<T>::peek()
-{
-	assert(size > 0);
-	return first->value;
-}
-
-template<class T>
-size_t PriorityQueue<T>::length() const
-{
-	return size;
-}
-
-template<class T>
-bool PriorityQueue<T>::isEmpty() const
-{
-	return size == 0;
-}
-
-template<class T>
-void PriorityQueue<T>::clear()
-{
-	/*while (size)
-		dequeue();*/
-
-	Data<T>* temp = first;
-	while (temp)
-	{
-		first = first->next;
-		delete temp;
-		temp = first;
-	}
-	last = nullptr;
-	size = 0;
-}
-
-template<class T>
-void PriorityQueue<T>::print() const
-{
-	Data<T>* temp = first;
-	while (temp)
-	{
-		cout << temp->value << endl;
-		temp = temp->next;
-	}
-	cout << endl;
-}
