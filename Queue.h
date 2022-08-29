@@ -3,26 +3,23 @@
 #include<cassert>
 #include "Data.h"
 #include "Func.h"
-////×ÅÐÃÀ Ï²ÑËß ìîäåðí³çàö³¿
-//ÍÅÄÎÐÎÁÈÂ
-
 
 using namespace std;
 
 template<class T>
-class BasicQueue
+class BaseQueue
 {
-
+protected:
 	Data<T>* first = nullptr;
-	Data<T>* last = nullptr;
-	size_t   size = 0;
+	Data<T>* last  = nullptr;
+	size_t   size  = 0;
 
 public:
-	BasicQueue() {}
-	BasicQueue(initializer_list<T> list);
-	~BasicQueue();
-	BasicQueue(const BasicQueue& q);
-	BasicQueue<T>& operator=(const BasicQueue<T>& q);
+	BaseQueue() {}
+	BaseQueue(initializer_list<T> list);
+	virtual ~BaseQueue() = 0;
+	BaseQueue(const BaseQueue& q);
+	BaseQueue& operator=(const BaseQueue& q);
 	void enqueue(const T& value);
 	void dequeue();
 	T peek();
@@ -34,45 +31,22 @@ public:
 };
 
 template<class T>
-class QueueRing : public virtual BasicQueue<T>
-{
-
-	Data<T>* first = nullptr;
-	Data<T>* last = nullptr;
-	size_t   size = 0;
-
-public:
-	QueueRing(){}
-	QueueRing(initializer_list<T> list);
-	~QueueRing();
-	//QueueRing(const QueueRing& q);
-	//QueueRing<T>& operator=(const QueueRing<T>& q);
-	void enqueue(const T& value);
-	//void print() const;
-	void ring();
-
-
-
-};
-
-
-
-
-template<class T>
-BasicQueue<T>::BasicQueue(initializer_list<T> list)
+BaseQueue<T>::BaseQueue(initializer_list<T> list)
 {
 	for (auto i = list.begin(); i < list.end(); i++)
+	{
 		enqueue(*i);
+	}
 }
 
 template<class T>
-BasicQueue<T>::~BasicQueue()
+BaseQueue<T>::~BaseQueue()
 {
 	this->clear();
 }
 
 template<class T>
-BasicQueue<T>::BasicQueue(const BasicQueue& q)
+BaseQueue<T>::BaseQueue(const BaseQueue& q)
 {
 	Data<T>* temp = q.first;
 	while (temp)
@@ -83,7 +57,7 @@ BasicQueue<T>::BasicQueue(const BasicQueue& q)
 }
 
 template<class T>
-BasicQueue<T>& BasicQueue<T>::operator=(const BasicQueue<T>& q)
+BaseQueue<T>& BaseQueue<T>::operator=(const BaseQueue<T>& q)
 {
 	Data<T>* temp = q.first;
 	while (temp)
@@ -92,10 +66,11 @@ BasicQueue<T>& BasicQueue<T>::operator=(const BasicQueue<T>& q)
 		temp = temp->next;
 	}
 	return *this;
+
 }
 
 template<class T>
-void BasicQueue<T>::enqueue(const T& value)
+void BaseQueue<T>::enqueue(const T& value)
 {
 	if (size == 0)
 	{
@@ -113,7 +88,7 @@ void BasicQueue<T>::enqueue(const T& value)
 }
 
 template<class T>
-void BasicQueue<T>::dequeue()
+void BaseQueue<T>::dequeue()
 {
 	if (size > 0)
 	{
@@ -126,26 +101,26 @@ void BasicQueue<T>::dequeue()
 }
 
 template<class T>
-T BasicQueue<T>::peek()
+T BaseQueue<T>::peek()
 {
 	assert(size > 0);
 	return first->value;
 }
 
 template<class T>
-size_t BasicQueue<T>::length() const
+size_t BaseQueue<T>::length() const
 {
 	return size;
 }
 
 template<class T>
-bool BasicQueue<T>::isEmpty() const
+bool BaseQueue<T>::isEmpty() const
 {
 	return size == 0;
 }
 
 template<class T>
-void BasicQueue<T>::clear()
+void BaseQueue<T>::clear()
 {
 	Data<T>* temp = first;
 	while (temp)
@@ -159,7 +134,7 @@ void BasicQueue<T>::clear()
 }
 
 template<class T>
-void BasicQueue<T>::print() const
+void BaseQueue<T>::print() const
 {
 	Data<T>* temp = first;
 	while (temp)
@@ -171,7 +146,7 @@ void BasicQueue<T>::print() const
 }
 
 template<class T>
-void BasicQueue<T>::print(int x, int y)
+void BaseQueue<T>::print(int x, int y)
 {
 	Data<T>* temp = first;
 	for (size_t i = 0; i < size; i++)
@@ -179,7 +154,7 @@ void BasicQueue<T>::print(int x, int y)
 		if (i <= 10)
 		{
 			gotoxy(x, y++);
-			cout << temp->value << '\n';
+			cout << temp->value << endl;
 		}
 		else
 		{
@@ -188,68 +163,95 @@ void BasicQueue<T>::print(int x, int y)
 				if (i == size - 10)
 				{
 					gotoxy(x, y++);
-					cout << "======^^^=====" << '\n';
+					cout << "======^^^=====" << endl;
 				}
 				else
 				{
 					gotoxy(x, y++);
-					cout << temp->value << '\n';
+					cout << temp->value << endl;
 				}
 			}
 		}
-
+		
 		temp = temp->next;
 	}
-	cout << '\n';
+	cout << endl;
 }
 
 
+/////////////////  QUEUE //////////////
+template<class T>
+class Queue : public BaseQueue<T>
+{
 
+};
 
+/////////////////  RING QUEUE //////////////
+template<class T>
+class RingQueue : public BaseQueue<T>
+{
+public:
+	void ring();
+};
 
 
 template<class T>
-QueueRing<T>::QueueRing(initializer_list<T> list)
+void RingQueue<T>::ring()
 {
-	for (auto i = list.begin(); i < list.end(); i++)
-		enqueue(*i);
-}
-
-template<class T>
-QueueRing<T>::~QueueRing()
-{
-	this->clear();
-}
-
-template<class T>
-void QueueRing<T>::enqueue(const T& value)
-{
-	if (size == 0)
+	if (this->size > 1)
 	{
-		first = new Data<T>;
-		first->value = value;
-		last = first;
+		Data<T>* temp = this->first;
+		this->first = this->first->next;
+		this->last->next = temp;
+		this->last = temp;
+		this->last->next = nullptr;
+	}
+}
+
+
+/////////////////  PRIORITY QUEUE //////////////
+template<class T>
+class PriorityQueue : public BaseQueue<T>
+{
+
+public:
+	void enqueue(const T& value, PRIORITY pri = PRIORITY::LOW);
+};
+
+template<class T>
+void PriorityQueue<T>::enqueue(const T& value, PRIORITY pri)
+{
+	Data<T>* temp = new Data<T>;
+	temp->value = value;
+	temp->pri = pri;
+
+	if (this->size == 0)
+	{
+		this->first = this->last = temp;
+		this->size++;
+		return;
+	}
+
+	if (pri <= this->last->pri)
+	{
+		this->last->next = temp;
+		this->last = temp;
+	}
+	else if (pri > this->first->pri)
+	{
+		temp->next = this->first;
+		this->first = temp;
 	}
 	else
 	{
-		last->next = new Data<T>;
-		last->next->value = value;
-		last = last->next;
+		Data<T>* pos = this->first;
+		while (pri <= pos->next->pri)
+		{
+			pos = pos->next;
+		}
+		temp->next = pos->next;
+		pos->next = temp;
 	}
-	size++;
-}
-
-template<class T>
-void QueueRing<T>::ring()
-{
-
-	if (size > 1)
-	{
-		Data<T>* temp = first;
-		first = first->next;
-		last->next = temp;
-		last = temp;
-		last->next = nullptr;
-	}
+	this->size++;
 }
 
